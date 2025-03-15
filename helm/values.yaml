@@ -12,8 +12,6 @@ service:
 
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.class: "gce"
   hosts:
     - host: hello-world.example.com
       paths:
