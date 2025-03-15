@@ -1,4 +1,4 @@
 provider "google" {
-  project = "mimetic-card-453823-u7"
+  project = "change-me"
   region  = "us-central1"
 }
