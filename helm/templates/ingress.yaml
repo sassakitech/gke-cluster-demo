@@ -6,14 +6,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce"
 spec:
-  rules:
-    - host: {{ index .Values.ingress.hosts 0 "host" | quote }}
-      http:
-        paths:
-          - path: {{ index .Values.ingress.hosts 0 "paths" 0 | quote }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Chart.Name }}-service
-                port:
-                  number: {{ .Values.service.port }}
+  defaultBackend:
+    service:
+      name: {{ .Chart.Name }}-service
+      port:
+        number: {{ .Values.service.port }}
