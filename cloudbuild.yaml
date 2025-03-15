@@ -1,3 +1,6 @@
+substitutions:
+  _IMAGE_TAG: 'latest'
+
 steps:
   - name: 'gcr.io/cloud-builders/git'
     id: 'clone-repository'
@@ -25,11 +28,11 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-image'
     dir: 'gke-cluster-demo/app'
-    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world:latest', '.' ]
+    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/hello-world/hello-world:${_IMAGE_TAG}', '.' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-image'
-    args: [ 'push', 'us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world:latest']
+    args: [ 'push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/hello-world/hello-world:${_IMAGE_TAG}']
     
   - name: 'gcr.io/cloud-builders/kubectl'
     id: 'configure-kubectl'
@@ -49,8 +52,8 @@ steps:
       - 'hello-world'
       - './gke-cluster-demo/helm'
       - '--set'
-      - 'image.repository=us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world'
+      - 'image.repository=us-central1-docker.pkg.dev/${PROJECT_ID}/hello-world/hello-world'
       - '--set'
-      - 'image.tag=latest'
+      - 'image.tag=${_IMAGE_TAG}'
 
 timeout: '1200s'
