@@ -44,16 +44,16 @@ steps:
           --region us-central1 \
           --project $PROJECT_ID
 
-  - name: 'alpine/helm'
+  - name: 'gcr.io/cloud-builders/gcloud'
     id: 'helm-upgrade'
+    entrypoint: 'bash'
     args:
-      - 'upgrade'
-      - '--install'
-      - 'hello-world'
-      - './gke-cluster-demo/helm'
-      - '--set'
-      - 'image.repository=us-central1-docker.pkg.dev/${PROJECT_ID}/hello-world/hello-world'
-      - '--set'
-      - 'image.tag=${_IMAGE_TAG}'
+      - '-c'
+      - |
+        curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        helm version
+        helm upgrade --install hello-world ./gke-cluster-demo/helm \
+          --set image.repository=us-central1-docker.pkg.dev/$PROJECT_ID/hello-world/hello-world \
+          --set image.tag=$_IMAGE_TAG
 
 timeout: '1200s'
