@@ -3,7 +3,7 @@ replicaCount: 2
 namespace: meu-namespace
 
 image:
-  repository: msassaki/hello-world
+  repository: meu-repo/hello-world
   tag: latest
 
 service:
