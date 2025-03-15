@@ -54,6 +54,7 @@ steps:
         helm version
         helm upgrade --install hello-world ./gke-cluster-demo/helm \
           --set image.repository=us-central1-docker.pkg.dev/$PROJECT_ID/hello-world/hello-world \
-          --set image.tag=$_IMAGE_TAG
+          --set image.tag=$_IMAGE_TAG \
+          --set namespace=meu-namespace
 
 timeout: '1200s'
