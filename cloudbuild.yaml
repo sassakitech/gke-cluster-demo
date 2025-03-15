@@ -1,0 +1,56 @@
+steps:
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'clone-repository'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        rm -rf gke-cluster-demo
+        git clone https://github.com/sassakitech/gke-cluster-demo.git
+
+  - name: 'python:3.9'
+    id: 'code-analysis'
+    dir: 'gke-cluster-demo/app'
+    entrypoint: 'bash'
+    args:
+        - '-c'
+        - |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest bandit
+          flake8 app.py || true
+          pytest --maxfail=1 --disable-warnings -q || true
+          bandit -r . || true
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-image'
+    dir: 'gke-cluster-demo/app'
+    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world:latest', '.' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-image'
+    args: [ 'push', 'us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world:latest']
+    
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'configure-kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials my-cluster \
+          --region us-central1 \
+          --project $PROJECT_ID
+
+  - name: 'alpine/helm'
+    id: 'helm-upgrade'
+    args:
+      - 'upgrade'
+      - '--install'
+      - 'hello-world'
+      - './gke-cluster-demo/helm'
+      - '--set'
+      - 'image.repository=us-central1-docker.pkg.dev/mimetic-card-453823-u7/hello-world/hello-world'
+      - '--set'
+      - 'image.tag=latest'
+
+timeout: '1200s'
