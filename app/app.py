@@ -41,8 +41,8 @@ def trigger_error():
 
 # Manipulador de erros global
 @app.errorhandler(Exception)
-def handle_exception():
-    app.logger.error('Erro não tratado')
+def handle_exception(e):
+    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
     return 'Erro interno do servidor', 500
 
 if __name__ == '__main__':
