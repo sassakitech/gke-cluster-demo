@@ -80,4 +80,9 @@ def health_check():
             "http.method": request.method,
             "http.route": "/healthz",
             "http.status_code": 200,
-       
+        })
+        requests_counter.add(1, attributes={"route": "/healthz", "status_code": "200"})
+        return 'OK', 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
