@@ -9,7 +9,7 @@ steps:
       - '-c'
       - |
         rm -rf gke-cluster-demo
-        git clone -b https://github.com/sassakitech/gke-cluster-demo.git
+        git clone https://github.com/sassakitech/gke-cluster-demo.git
 
   - name: 'python:3.9'
     id: 'code-analysis'
