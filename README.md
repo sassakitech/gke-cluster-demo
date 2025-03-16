@@ -171,7 +171,7 @@ Timeout:
 Logs e Debugging:
 - O comando no Cloud Shell já imprime em sua saída os logs da execução do Cloud Build. Para mais detalhes, no console do GCP, acesse Cloud Build e veja em Histórico.
 
-### Acesso à aplicação
+## Acesso à aplicação
 Após o deploy, obtenha o IP público para acessar a aplicação:
 ```
 kubectl get ingress -n meu-namespace
@@ -179,7 +179,7 @@ kubectl get ingress -n meu-namespace
 
 Acesse a aplicação no navegador: `http://<ip-do-ingress>:80`.
 
-### Troubleshooting
+## Troubleshooting
 
 1. Verificar Logs
 Para verificar logs da aplicação:
@@ -199,7 +199,7 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
-### Limpeza dos recursos
+## Limpeza dos recursos
 
 1. Desinstalar a aplicação
 Desinstale o Helm Chart:
