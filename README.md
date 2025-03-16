@@ -4,7 +4,7 @@ Este repositório contém um exemplo de infraestrutura como código (IaC) usando
 
 ## Estrutura do Projeto
 
-'''
+```
 gke-cluster-demo/                     # Nome do repositório
 ├── terraform/                        # Código Terraform para provisionar a infraestrutura
 │   ├── provider.tf                   # Configuração do provedor GCP
@@ -25,13 +25,13 @@ gke-cluster-demo/                     # Nome do repositório
 │   │   ├── ingress.yaml              # Ingress para expor a aplicação
 ├── cloudbuild.yaml                   # Configuração do pipeline CI/CD no Cloud Build
 ├── README.md                         # Documentação do projeto
-'''
+```
 
 ## Pré-requisitos
 
 1. Google Cloud Shell: Acesse o Google Cloud Console e inicie o Cloud Shell.
 
 2. Definir o Projeto Padrão:
-'''
+```
 gcloud config set project <id-do-projeto>
-'''
+```
