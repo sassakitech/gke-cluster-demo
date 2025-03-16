@@ -1,14 +1,16 @@
 from flask import Flask, request
 import logging
+import json
 from opentelemetry import trace, metrics
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+from opentelemetry.exporter.google.cloud.trace import CloudTraceSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.exporter.cloud_monitoring import CloudMonitoringMetricsExporter
+from opentelemetry.exporter.google.cloud.monitoring import CloudMonitoringMetricsExporter
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk._logs.export import LoggingHandler
 
 # Configuração do OpenTelemetry para traces
 trace.set_tracer_provider(TracerProvider(resource=Resource.create({"service.name": "flask-app"})))
@@ -19,17 +21,36 @@ trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(cloud_trace_ex
 metric_reader = PeriodicExportingMetricReader(
     CloudMonitoringMetricsExporter(), export_interval_millis=5000
 )
-metrics.set_meter_provider(MeterProvider(metric_readers=[metric_reader]))
+meter_provider = MeterProvider(metric_readers=[metric_reader])
+metrics.set_meter_provider(meter_provider)
+meter = meter_provider.get_meter("flask-app")
 
-# Configuração do logging para logs estruturados
-logging.basicConfig(level=logging.INFO, format='{"time": "%(asctime)s", "severity": "%(levelname)s", "message": "%(message)s", "trace_id": "%(otelTraceID)s", "span_id": "%(otelSpanID)s"}')
+# Configuração do logging estruturado com OpenTelemetry
+class OpenTelemetryLoggingFormatter(logging.Formatter):
+    def format(self, record):
+        record_dict = {
+            "time": self.formatTime(record, self.datefmt),
+            "severity": record.levelname,
+            "message": record.getMessage(),
+        }
+        
+        span = trace.get_current_span()
+        if span:
+            record_dict["trace_id"] = format(span.get_span_context().trace_id, '032x')
+            record_dict["span_id"] = format(span.get_span_context().span_id, '016x')
+
+        return json.dumps(record_dict)
+
+log_handler = LoggingHandler()
+log_handler.setFormatter(OpenTelemetryLoggingFormatter())
 logger = logging.getLogger(__name__)
+logger.addHandler(log_handler)
+logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)  # Instrumentação do Flask com OpenTelemetry
 
 # Métricas personalizadas
-meter = metrics.get_meter("flask-app")
 requests_counter = meter.create_counter(
     "http_requests_total",
     description="Total de requisições HTTP",
@@ -49,7 +70,7 @@ def hello_world():
             "http.route": "/",
             "http.status_code": 200,
         })
-        requests_counter.add(1, {"route": "/", "status_code": 200})
+        requests_counter.add(1, attributes={"route": "/", "status_code": "200"})
         return 'Hello, World!'
 
 @app.route('/healthz')
@@ -59,9 +80,4 @@ def health_check():
             "http.method": request.method,
             "http.route": "/healthz",
             "http.status_code": 200,
-        })
-        requests_counter.add(1, {"route": "/healthz", "status_code": 200})
-        return 'OK', 200
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+       
