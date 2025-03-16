@@ -35,3 +35,34 @@ gke-cluster-demo/                     # Nome do repositório
 ```
 gcloud config set project <id-do-projeto>
 ```
+3. Caso não saiba o ID do projeto, liste os projetos disponíveis:
+```
+gcloud projects list
+```
+
+## Configuração Inicial
+
+1. Clonar o Repositório
+No Cloud Shell, clone o repositório:
+```
+git clone https://github.com/sassakitech/gke-cluster-demo.git
+cd gke-cluster-demo
+```
+
+2. Ativar APIs Necessárias
+Ative as APIs do GCP necessárias para o projeto:
+```
+gcloud services enable compute.googleapis.com
+gcloud services enable container.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable cloudresourcemanager.googleapis.com
+```
+
+3. Configurar o Projeto no Terraform
+No arquivo `terraform/provider.tf`, substitua o valor `change-me` pelo ID do seu projeto:
+``` terraform
+provider "google" {
+  project = "<id-do-projeto>"
+  region  = "us-central1"
+}
+```
