@@ -5,3 +5,4 @@ opentelemetry-sdk
 opentelemetry-instrumentation-flask
 opentelemetry-exporter-gcp-trace
 opentelemetry-exporter-otlp
+opentelemetry-exporter-google-cloud
