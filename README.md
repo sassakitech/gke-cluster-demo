@@ -40,9 +40,9 @@ gcloud config set project <id-do-projeto>
 gcloud projects list
 ```
 
-## Configuração Inicial
+## Configuração inicial
 
-1. Clonar o Repositório
+1. Clonar o repositório
 No Cloud Shell, clone o repositório:
 ```
 git clone https://github.com/sassakitech/gke-cluster-demo.git
@@ -69,7 +69,7 @@ provider "google" {
 
 ## Provisionando a Infraestrutura com Terraform
 
-1. Inicializar e Aplicar o Terraform
+1. Inicializar e aplicar o Terraform
 Navegue até o diretório `terraform/` e execute os seguintes comandos:
 ```bash
 cd terraform/
@@ -103,9 +103,9 @@ Crie um namespace para a aplicação:
 kubectl create namespace meu-namespace
 ```
 
-## Configurando o Repositório de Imagens Docker
+## Configurando o repositório de Imagens Docker
 
-1. Criar Repositório no Artifact Registry
+1. Criar repositório no Artifact Registry
 Crie um repositório para armazenar as imagens Docker:
 ```
 gcloud artifacts repositories create hello-world \
@@ -118,12 +118,12 @@ gcloud artifacts repositories create hello-world \
 
 O arquivo cloudbuild.yaml define um pipeline CI/CD que automatiza o processo de clone do repositório, análise de código, construção e push da imagem Docker, configuração do kubectl e deploy da aplicação no GKE usando Helm. Abaixo estão os passos resumidos:
 
-### Passos do Pipeline
+### Passos da pipeline
 1. Clone do Repositório:
 Clona o repositório `gke-cluster-demo` do GitHub para o ambiente do Cloud Build.
 
 2. Análise de Código:
-Realiza análise estática do código Python usando`flake`,`pytest` e `bandit`.
+Realiza análise estática do código Python usando`flake`,`pytest` e `bandit`. Os testes e verificações são executados, mas falhas não interrompem o pipeline.
 
 3. Construção da Imagem Docker:
 Constrói a imagem Docker da aplicação a partir do `Dockerfile` na pasta `app/`.
@@ -153,14 +153,14 @@ gcloud projects add-iam-policy-binding <id-do-projeto> \
   --role=roles/cloudbuild.builds.editor
 ```
 
-### Executando o Pipeline
+### Executando o CI/CD
 
 Para executar o pipeline, use o seguinte comando no diretório raiz do repositório:
 ```
 gcloud builds submit --config=cloudbuild.yaml .
 ```
 
-### Detalhes Adicionais
+### Detalhes adicionais
 
 Substitutions:
 - A variável `_IMAGE_TAG` define a tag da imagem Docker. Padrão como `latest`.
@@ -171,7 +171,7 @@ Timeout:
 Logs e Debugging:
 - O comando no Cloud Shell já imprime em sua saída os logs da execução do Cloud Build. Para mais detalhes, no console do GCP, acesse Cloud Build e veja em Histórico.
 
-### Acesso à Aplicação
+### Acesso à aplicação
 Após o deploy, obtenha o IP público para acessar a aplicação:
 ```
 kubectl get ingress -n meu-namespace
@@ -199,26 +199,26 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
-### Limpeza dos Recursos
+### Limpeza dos recursos
 
-1. Desinstalar a Aplicação
+1. Desinstalar a aplicação
 Desinstale o Helm Chart:
 ```
 helm uninstall hello-world -n meu-namespace
 ```
 
-2. Deletar o Namespace
+2. Deletar o namespace
 ```
 kubectl delete namespace meu-namespace
 ```
 
-3. Destruir a Infraestrutura com Terraform
+3. Destruir a infraestrutura com Terraform
 Navegue até o diretório `terraform/` e destrua os recursos:
 ```
 cd terraform/
 terraform destroy
 ```
 
-4. Limpar Recursos do GCP
+4. Limpar recursos do GCP
 - Exclua o repositório no Artifact Registry.
 - Remova os arquivos do Cloud Build no Cloud Storage.
