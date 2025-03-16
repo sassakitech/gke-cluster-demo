@@ -48,7 +48,11 @@ def page_not_found(e):
 # Manipulador de erros global para qualquer exceção não tratada
 @app.errorhandler(Exception)
 def handle_exception(e):
-    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
+    # Verifica se o erro não é 404 para evitar duplicação
+    if isinstance(e, werkzeug.exceptions.NotFound):
+        return jsonify(error="Página não encontrada"), 404
+    
+    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)  # Log de erro com traceback
     return jsonify(error="Erro interno do servidor"), 500
 
 if __name__ == '__main__':
