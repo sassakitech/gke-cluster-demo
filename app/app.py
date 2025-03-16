@@ -39,11 +39,17 @@ def trigger_error():
     app.logger.error('Erro na rota /error')
     return 'Erro interno do servidor', 500
 
-# Manipulador de erros global
+# Manipulador de erros específico para 404 (rota não encontrada)
+@app.errorhandler(404)
+def page_not_found(e):
+    app.logger.warning(f'Página não encontrada: {str(e)}')
+    return jsonify(error="Página não encontrada"), 404
+
+# Manipulador de erros global para qualquer exceção não tratada
 @app.errorhandler(Exception)
 def handle_exception(e):
     app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
-    return 'Erro interno do servidor', 500
+    return jsonify(error="Erro interno do servidor"), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
