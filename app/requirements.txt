@@ -1,5 +1,5 @@
 flask==2.2.3
-opentelemetry-sdk==2.18.0
-opentelemetry-exporter-google-cloud==1.18.0
-opentelemetry-instrumentation-flask==0.34b0
-opentelemetry-exporter-google-cloud-monitoring==0.18.0
+opentelemetry-sdk
+opentelemetry-exporter-google-cloud
+opentelemetry-instrumentation-flask
+opentelemetry-exporter-google-cloud-monitoring
