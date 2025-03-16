@@ -55,7 +55,7 @@ steps:
         helm upgrade --install hello-world ./gke-cluster-demo/helm \
           --namespace=meu-namespace \
           --create-namespace \
-          --recreate-pods
+          --recreate-pods \
           --set image.repository=us-central1-docker.pkg.dev/$PROJECT_ID/hello-world/hello-world \
           --set image.tag=$_IMAGE_TAG \
           --set namespace=meu-namespace
