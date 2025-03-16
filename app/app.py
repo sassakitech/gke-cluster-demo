@@ -1,5 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import logging
+import time
 import json
 from opentelemetry import trace, metrics
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -56,11 +57,34 @@ requests_counter = meter.create_counter(
     description="Total de requisições HTTP",
     unit="1",
 )
+
+requests_errors_counter = meter.create_counter(
+    "http_requests_errors_total",
+    description="Total de requisições HTTP com erro",
+    unit="1",
+)
+
 request_duration = meter.create_histogram(
     "http_request_duration_seconds",
     description="Duração das requisições HTTP",
     unit="s",
 )
+
+@app.before_request
+def start_timer():
+    request.start_time = time.time()
+
+@app.after_request
+def record_metrics(response):
+    duration = time.time() - request.start_time
+    request_duration.record(duration, attributes={"route": request.path, "status_code": str(response.status_code)})
+
+    requests_counter.add(1, attributes={"route": request.path, "status_code": str(response.status_code)})
+
+    if response.status_code >= 400:
+        requests_errors_counter.add(1, attributes={"route": request.path, "status_code": str(response.status_code)})
+
+    return response
 
 @app.route('/')
 def hello_world():
@@ -70,7 +94,6 @@ def hello_world():
             "http.route": "/",
             "http.status_code": 200,
         })
-        requests_counter.add(1, attributes={"route": "/", "status_code": "200"})
         return 'Hello, World!'
 
 @app.route('/healthz')
@@ -81,8 +104,28 @@ def health_check():
             "http.route": "/healthz",
             "http.status_code": 200,
         })
-        requests_counter.add(1, attributes={"route": "/healthz", "status_code": "200"})
         return 'OK', 200
+
+@app.route('/error')
+def error_endpoint():
+    with trace.get_tracer(__name__).start_as_current_span("error_endpoint"):
+        logger.error('Erro simulado', extra={
+            "http.method": request.method,
+            "http.route": "/error",
+            "http.status_code": 500,
+        })
+        return jsonify({"error": "Erro interno"}), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Captura erros não tratados e registra métricas de erro"""
+    logger.error(f'Erro inesperado: {str(e)}', extra={
+        "http.method": request.method,
+        "http.route": request.path,
+        "http.status_code": 500,
+    })
+    requests_errors_counter.add(1, attributes={"route": request.path, "status_code": "500"})
+    return jsonify({"error": "Erro interno"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
