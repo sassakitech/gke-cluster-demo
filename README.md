@@ -137,8 +137,14 @@ Configura o `kubectl` para se conectar ao cluster GKE provisionado.
 6. Instalação e Execução do Helm:
 Instala o Helm e faz o deploy da aplicação no cluster GKE usando o Helm Chart.
 
+### Executando o CI/CD
+
+Para executar o pipeline, use o seguinte comando no diretório raiz do repositório:
+```
+gcloud builds submit --config=cloudbuild.yaml .
+```
 ### Adicionando permissões ao Cloud Build
-1. Conceda as permissões necessárias ao Cloud Build:
+Em caso de erros na execução do código do `cloudbuild.yaml`, conceda as permissões necessárias ao Cloud Build:
 ```
 gcloud projects add-iam-policy-binding <id-do-projeto> \
   --member=serviceAccount:<numero-do-projeto>@cloudbuild.gserviceaccount.com \
@@ -151,13 +157,6 @@ gcloud projects add-iam-policy-binding <id-do-projeto> \
 gcloud projects add-iam-policy-binding <id-do-projeto> \
   --member=serviceAccount:<numero-do-projeto>@cloudbuild.gserviceaccount.com \
   --role=roles/cloudbuild.builds.editor
-```
-
-### Executando o CI/CD
-
-Para executar o pipeline, use o seguinte comando no diretório raiz do repositório:
-```
-gcloud builds submit --config=cloudbuild.yaml .
 ```
 
 ### Detalhes adicionais
@@ -204,6 +203,7 @@ Rollback com a release e revision anterior desejada:
 ```
 helm rollback <nome-da-release> <numero-da-revision> -n meu-namespace
 ```
+
 Caso o Helm não esteja instalado, execute:
 ```
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
