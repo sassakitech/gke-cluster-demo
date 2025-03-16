@@ -17,7 +17,9 @@ app.logger.handlers.clear()
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-log.setLevel(logging.CRITICAL)  # Define o nível para CRITICAL, ignorando logs menos severos como INFO e ERROR
+# Desabilitar log de requisições HTTP do Flask (werkzeug)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # Rota principal
 @app.route('/')
