@@ -139,7 +139,7 @@ Instala o Helm e faz o deploy da aplicação no cluster GKE usando o Helm Chart.
 
 ### Executando o CI/CD
 
-Para executar o pipeline, use o seguinte comando no diretório raiz do repositório:
+Para executar o pipeline, use o seguinte comando no diretório raiz do repositório (local onde se encontra o arquivo `cloudbuild.yaml`):
 ```
 gcloud builds submit --config=cloudbuild.yaml .
 ```
