@@ -1,5 +1,2 @@
-Flask>=2.2.3
+Flask==2.0.1
 Werkzeug==2.0.3
-opentelemetry-sdk
-opentelemetry-instrumentation-flask
-opentelemetry-exporter-google-cloud
