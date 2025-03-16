@@ -39,11 +39,5 @@ def trigger_error():
     app.logger.error('Erro na rota /error')
     return 'Erro interno do servidor', 500
 
-# Manipulador de erros global para qualquer exceção não tratada
-@app.errorhandler(Exception)
-def handle_exception(e):
-    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
-    return jsonify(error="Erro interno do servidor"), 500
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
