@@ -36,13 +36,13 @@ def health_check():
 # Rota simulando um erro
 @app.route('/error')
 def trigger_error():
-    app.logger.error(f'Erro na rota /error: {str(e)}', exc_info=True)
+    app.logger.error(f'Erro na rota /error')
     return 'Erro interno do servidor', 500
 
 # Manipulador de erros global
 @app.errorhandler(Exception)
 def handle_exception(e):
-    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
+    app.logger.error(f'Erro não tratado')
     return 'Erro interno do servidor', 500
 
 if __name__ == '__main__':
