@@ -60,9 +60,32 @@ gcloud services enable cloudresourcemanager.googleapis.com
 
 3. Configurar o Projeto no Terraform
 No arquivo `terraform/provider.tf`, substitua o valor `change-me` pelo ID do seu projeto:
-``` terraform
+```hcl
 provider "google" {
-  project = "<id-do-projeto>"
+  project = "change-me"
   region  = "us-central1"
 }
 ```
+
+## Provisionando a Infraestrutura com Terraform
+
+1. Inicializar e Aplicar o Terraform
+Navegue até o diretório `terraform/` e execute os seguintes comandos:
+```bash
+cd terraform/
+
+# Inicializar o Terraform
+terraform init
+
+# Verificar o plano de execução
+terraform plan
+
+# Aplicar as configurações
+terraform apply
+```
+
+Isso criará:
+
+- Uma rede e subnets.
+- Um cluster GKE com dois nós em zonas diferentes.
+
