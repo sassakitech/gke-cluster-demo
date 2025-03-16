@@ -18,7 +18,6 @@ app.logger.handlers.clear()
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-
 # Rota principal
 @app.route('/')
 def hello_world():
@@ -40,12 +39,6 @@ def trigger_error():
     except Exception as e:
         app.logger.error(f'Erro na rota /error: {str(e)}', exc_info=True)  # Log de erro com traceback
         return 'Erro interno do servidor', 500
-
-# Manipulador de erros global
-@app.errorhandler(Exception)
-def handle_exception(e):
-    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)  # Log de erro com traceback
-    return 'Erro interno do servidor', 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
