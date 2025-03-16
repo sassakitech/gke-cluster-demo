@@ -189,8 +189,20 @@ kubectl logs -n meu-namespace -l app=hello-world
 
 2. Rollback com Helm
 Se necessário, faça rollback da aplicação no Cloud Shell:
+
+Veja a release:
 ```
-helm rollback hello-world -n meu-namespace
+helm list  --namespace meu-namespace
+```
+
+Listar as revisions:
+```
+helm history <nome-da-release> --namespace meu-namespace
+```
+
+Rollback com a release e revision anterior desejada:
+```
+helm rollback <nome-da-release> <numero-da-revision> -n meu-namespace
 ```
 Caso o Helm não esteja instalado, execute:
 ```
