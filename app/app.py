@@ -17,9 +17,7 @@ app.logger.handlers.clear()
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
 
-# Desabilitar log de requisições HTTP do Flask (werkzeug)
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.CRITICAL)  # Define o nível para CRITICAL, ignorando logs menos severos como INFO e ERROR
 
 # Rota principal
 @app.route('/')
@@ -36,17 +34,13 @@ def health_check():
 # Rota simulando um erro
 @app.route('/error')
 def trigger_error():
-    try:
-        # Simula um erro (divisão por zero)
-        result = 1 / 0
-    except Exception as e:
-        app.logger.error(f'Erro na rota /error: {str(e)}', exc_info=True)  # Log de erro com traceback
-        return 'Erro interno do servidor', 500
+    app.logger.error(f'Erro na rota /error: {str(e)}', exc_info=True)
+    return 'Erro interno do servidor', 500
 
 # Manipulador de erros global
 @app.errorhandler(Exception)
 def handle_exception(e):
-    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)  # Log de erro com traceback
+    app.logger.error(f'Erro não tratado: {str(e)}', exc_info=True)
     return 'Erro interno do servidor', 500
 
 if __name__ == '__main__':
