@@ -116,7 +116,7 @@ gcloud artifacts repositories create hello-world \
 
 ## Pipeline CI/CD com Cloud Build
 
-O arquivo cloudbuild.yaml define um pipeline CI/CD que automatiza o processo de clone do repositório, análise de código, construção e push da imagem Docker, configuração do kubectl e deploy da aplicação no GKE usando Helm. Abaixo estão os passos resumidos:
+O arquivo `cloudbuild.yaml` define um pipeline CI/CD que automatiza o processo de clone do repositório, análise de código, construção e push da imagem Docker, configuração do kubectl e deploy da aplicação no GKE usando Helm. Abaixo estão os passos resumidos:
 
 ### Passos da pipeline
 1. Clone do Repositório:
