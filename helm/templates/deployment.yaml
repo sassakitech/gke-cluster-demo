@@ -7,6 +7,13 @@ metadata:
     app: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
+  minReadySeconds: 30
+  progressDeadlineSeconds: 300
   selector:
     matchLabels:
       app: {{ .Chart.Name }}
@@ -28,6 +35,18 @@ spec:
           limits:
             cpu: "100m"
             memory: "100Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.service.targetPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.service.targetPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
